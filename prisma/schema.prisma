@@ -9,3 +9,26 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
+
+  groups Group[] @relation("UserGroups")
+  Group  Group[]
+
+  @@map("users")
+}
+
+model Group {
+  id       String @id @default(uuid())
+  name     String @unique
+  authorId String
+
+  integrants User[] @relation("UserGroups")
+  author     User   @relation(fields: [authorId], references: [id])
+
+  @@map("groups")
+}
